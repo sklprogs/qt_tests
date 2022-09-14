@@ -32,6 +32,20 @@ class MainWindow(PyQt5.QtWidgets.QMainWindow):
         self.slider.setWidgetResizable(True)
         self.slider.setWidget(self.table)
         self.setCentralWidget(self.slider)
+        self.set_bindings()
+    
+    def go_down(self):
+        print('Going down...')
+        #self.slider.ensureVisible(0,1300,50,50)
+        self.slider.ensureVisible(0,100,20,20)
+        #bar = self.slider.verticalScrollBar()
+        #bar.setValue(bar.value() + 10)
+    
+    def bind(self,hotkey,action):
+        PyQt5.QtWidgets.QShortcut(PyQt5.QtGui.QKeySequence(hotkey),self).activated.connect(action)
+    
+    def set_bindings(self):
+        self.bind('Esc',self.go_down)
 
 
 if __name__ == '__main__':
