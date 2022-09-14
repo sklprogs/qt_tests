@@ -27,10 +27,15 @@ class MainWindow(PyQt5.QtWidgets.QMainWindow):
     
     def __init__(self):
         super().__init__()
-        self.table = PyQt5.QtWidgets.QTableView()
         self.slider = PyQt5.QtWidgets.QScrollArea()
+        self.widget = PyQt5.QtWidgets.QWidget()
+        self.layout = PyQt5.QtWidgets.QVBoxLayout()
+        self.table = PyQt5.QtWidgets.QTableView()
+        self.layout.addWidget(self.table)
+        self.widget.setLayout(self.layout)
+        #self.slider.setVerticalScrollBarPolicy(PyQt5.QtCore.Qt.ScrollBarAlwaysOn)
         self.slider.setWidgetResizable(True)
-        self.slider.setWidget(self.table)
+        self.slider.setWidget(self.widget)
         self.setCentralWidget(self.slider)
         self.set_bindings()
     
