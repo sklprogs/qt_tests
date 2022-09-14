@@ -24,10 +24,14 @@ class TableModel(PyQt5.QtCore.QAbstractTableModel):
 
 
 class MainWindow(PyQt5.QtWidgets.QMainWindow):
+    
     def __init__(self):
         super().__init__()
         self.table = PyQt5.QtWidgets.QTableView()
-        self.setCentralWidget(self.table)
+        self.slider = PyQt5.QtWidgets.QScrollArea()
+        self.slider.setWidgetResizable(True)
+        self.slider.setWidget(self.table)
+        self.setCentralWidget(self.slider)
 
 
 if __name__ == '__main__':
