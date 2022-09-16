@@ -33,18 +33,25 @@ class MainWindow(PyQt5.QtWidgets.QMainWindow):
         self.table = PyQt5.QtWidgets.QTableView()
         self.layout.addWidget(self.table)
         self.widget.setLayout(self.layout)
-        #self.slider.setVerticalScrollBarPolicy(PyQt5.QtCore.Qt.ScrollBarAlwaysOn)
         self.slider.setWidgetResizable(True)
         self.slider.setWidget(self.widget)
         self.setCentralWidget(self.slider)
+        self.vscroll = self.slider.verticalScrollBar()
+        # Scrolling does not work without this
+        self.slider.setVerticalScrollBarPolicy(PyQt5.QtCore.Qt.ScrollBarAlwaysOn)
         self.set_bindings()
     
     def go_down(self):
         print('Going down...')
+        # Required for scrolling; works only after the main widget is shown
+        self.vscroll.setMaximum(100)
         #self.slider.ensureVisible(0,1300,50,50)
-        self.slider.ensureVisible(0,100,20,20)
-        #bar = self.slider.verticalScrollBar()
-        #bar.setValue(bar.value() + 10)
+        #self.slider.ensureVisible(0,100,20,20)
+        value = self.vscroll.value()
+        print('Scrollbar is at',value)
+        self.vscroll.setValue(value + 10)
+        value = self.vscroll.value()
+        print('Scrollbar moved to',value)
     
     def bind(self,hotkey,action):
         PyQt5.QtWidgets.QShortcut(PyQt5.QtGui.QKeySequence(hotkey),self).activated.connect(action)
@@ -66,4 +73,5 @@ if __name__ == '__main__':
     model = TableModel(rows)
     window.table.setModel(model)
     window.show()
+    window.setGeometry(300,300,800,600)
     app.exec_()
