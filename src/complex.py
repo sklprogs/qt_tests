@@ -8,6 +8,35 @@ from skl_shared_qt.localize import _
 import skl_shared_qt.shared as sh
 
 
+class TableModel(PyQt5.QtCore.QAbstractTableModel):
+    
+    def __init__(self,datain,parent=None,*args):
+        PyQt5.QtCore.QAbstractTableModel.__init__(self,parent,*args)
+        self.arraydata = datain
+
+    def rowCount(self,parent):
+        return len(self.arraydata)
+
+    def columnCount(self,parent):
+        return len(self.arraydata[0])
+
+    def data(self,index,role):
+        if not index.isValid():
+            return PyQt5.QtCore.QVariant()
+        if role == PyQt5.QtCore.Qt.DisplayRole:
+            try:
+                return PyQt5.QtCore.QVariant(self.arraydata[index.row()][index.column()])
+            except Exception as e:
+                mes = 'List out of bounds at row #{}, col #{}'.format(index.row(),index.column())
+                print(mes)
+                return PyQt5.QtCore.QVariant()
+    
+    def update(self,rowno,colno):
+        index_ = self.index(rowno,colno)
+        self.dataChanged.emit(index_,index_)
+
+
+
 class App:
     
     def __init__(self):
@@ -15,12 +44,29 @@ class App:
     
     def show(self):
         self.widget.showMaximized()
-        #self.widget.show()
     
     def set_gui(self):
         self.widget = PyQt5.QtWidgets.QMainWindow()
+        compound = PyQt5.QtWidgets.QWidget()
+        layout = PyQt5.QtWidgets.QVBoxLayout()
+        self.table = Table()
         self.panel = Panel()
-        self.widget.setCentralWidget(self.panel.widget)
+        layout.addWidget(self.table.table)
+        layout.addWidget(self.panel.widget)
+        compound.setLayout(layout)
+        self.widget.setCentralWidget(compound)
+
+
+
+class Table:
+    
+    def __init__(self):
+        self.set_gui()
+        
+    def set_gui(self):
+        self.widget = PyQt5.QtWidgets.QWidget()
+        self.layout = PyQt5.QtWidgets.QVBoxLayout()
+        self.table = PyQt5.QtWidgets.QTableView()
 
 
 
@@ -93,16 +139,14 @@ if __name__ == '__main__':
     import sys
     exe = PyQt5.QtWidgets.QApplication(sys.argv)
     app = App()
-    '''
-    app.set_gui()
-    data = [['helLo','I Am Here','Hello there!']
-           ,['distinct','creation','suffering']
-           ,['tree','as;f,d','sdafsdfasdfasdfsdfsdfsd']
-           ]
-    
-    global model
+    data = []
+    for rowno in range(100):
+        row = []
+        for colno in range(10):
+            mes = _('Row: {}. Column: {}').format(rowno,colno)
+            row.append(mes)
+        data.append(row)
     model = TableModel(data)
-    app.table.setModel(model)
-    '''
+    app.table.table.setModel(model)
     app.show()
     sys.exit(exe.exec_())
