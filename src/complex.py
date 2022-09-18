@@ -47,14 +47,17 @@ class App:
     
     def set_gui(self):
         self.widget = PyQt5.QtWidgets.QMainWindow()
-        compound = PyQt5.QtWidgets.QWidget()
-        layout = PyQt5.QtWidgets.QVBoxLayout()
+        self.compound = PyQt5.QtWidgets.QWidget()
+        self.layout = PyQt5.QtWidgets.QVBoxLayout()
         self.table = Table()
         self.panel = Panel()
-        layout.addWidget(self.table.table)
-        layout.addWidget(self.panel.widget)
-        compound.setLayout(layout)
-        self.widget.setCentralWidget(compound)
+        self.layout.addWidget(self.table.table)
+        self.layout.addWidget(self.panel.widget)
+        self.compound.setLayout(self.layout)
+        self.scroll = PyQt5.QtWidgets.QScrollArea()
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidget(self.compound)
+        self.widget.setCentralWidget(self.scroll)
 
 
 
