@@ -45,11 +45,13 @@ class MainWindow(PyQt5.QtWidgets.QMainWindow):
         print('Going down...')
         # Required for scrolling; works only after the main widget is shown
         self.vscroll.setMaximum(100)
-        #self.slider.ensureVisible(0,1300,50,50)
+        self.slider.ensureVisible(0,1300,50,50)
         #self.slider.ensureVisible(0,100,20,20)
+        '''
         value = self.vscroll.value()
         print('Scrollbar is at',value)
         self.vscroll.setValue(value + 10)
+        '''
         value = self.vscroll.value()
         print('Scrollbar moved to',value)
     
