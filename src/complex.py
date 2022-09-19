@@ -42,6 +42,12 @@ class App:
     def __init__(self):
         self.set_gui()
     
+    def set_bindings(self):
+        self.bind('Down',self.table.go_down)
+    
+    def bind(self,hotkey,action):
+        PyQt5.QtWidgets.QShortcut(PyQt5.QtGui.QKeySequence(hotkey),self.widget).activated.connect(action)
+    
     def show(self):
         self.widget.showMaximized()
     
@@ -58,6 +64,7 @@ class App:
         self.scroll.setWidgetResizable(True)
         self.scroll.setWidget(self.compound)
         self.widget.setCentralWidget(self.scroll)
+        self.set_bindings()
 
 
 
@@ -65,6 +72,10 @@ class Table:
     
     def __init__(self):
         self.set_gui()
+    
+    def go_down(self):
+        print('Going down...')
+        
         
     def set_gui(self):
         self.widget = PyQt5.QtWidgets.QWidget()
