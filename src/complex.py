@@ -60,10 +60,7 @@ class App:
         self.layout.addWidget(self.table.table)
         self.layout.addWidget(self.panel.widget)
         self.compound.setLayout(self.layout)
-        self.scroll = PyQt5.QtWidgets.QScrollArea()
-        self.scroll.setWidgetResizable(True)
-        self.scroll.setWidget(self.compound)
-        self.widget.setCentralWidget(self.scroll)
+        self.widget.setCentralWidget(self.compound)
         self.set_bindings()
 
 
@@ -75,7 +72,7 @@ class Table:
     
     def go_down(self):
         print('Going down...')
-        
+        self.table.verticalScrollBar().setValue(30)
         
     def set_gui(self):
         self.widget = PyQt5.QtWidgets.QWidget()
