@@ -13,16 +13,8 @@ class TableDelegate(PyQt5.QtWidgets.QStyledItemDelegate):
     def paint(self,painter,option,index):
         options = PyQt5.QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(options,index)
-        
-        if options.widget:
-            style = options.widget.style()
-        else:
-            style = PyQt5.QtWidgets.QApplication.style()
-            
+        style = options.widget.style()
         style.drawControl(PyQt5.QtWidgets.QStyle.CE_ItemViewItem,options,painter)
-        ctx = PyQt5.QtGui.QAbstractTextDocumentLayout.PaintContext()
-        
-        textRect = style.subElementRect(PyQt5.QtWidgets.QStyle.SE_ItemViewItemText,options)
         
         if index.row() == self.rowno and index.column() == self.colno:
             color = PyQt5.QtGui.QColor('red')
@@ -34,11 +26,6 @@ class TableDelegate(PyQt5.QtWidgets.QStyledItemDelegate):
             painter.drawRect(option.rect)
         
         painter.save()
-    
-        painter.translate(textRect.topLeft())
-        # Hide too long text; do not allow cells to overlap
-        painter.setClipRect(textRect.translated(-textRect.topLeft()))
-    
         painter.restore()
 
 
