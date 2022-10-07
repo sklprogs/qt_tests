@@ -11,6 +11,19 @@ class TableDelegate(PyQt5.QtWidgets.QStyledItemDelegate):
         self.colno = 0
     
     def paint(self,painter,option,index):
+        options = PyQt5.QtWidgets.QStyleOptionViewItem(option)
+        self.initStyleOption(options,index)
+        
+        if options.widget:
+            style = options.widget.style()
+        else:
+            style = PyQt5.QtWidgets.QApplication.style()
+            
+        style.drawControl(PyQt5.QtWidgets.QStyle.CE_ItemViewItem,options,painter)
+        ctx = PyQt5.QtGui.QAbstractTextDocumentLayout.PaintContext()
+        
+        textRect = style.subElementRect(PyQt5.QtWidgets.QStyle.SE_ItemViewItemText,options)
+        
         if index.row() == self.rowno and index.column() == self.colno:
             color = PyQt5.QtGui.QColor('red')
             pen = PyQt5.QtGui.QPen(color,2)
@@ -19,6 +32,14 @@ class TableDelegate(PyQt5.QtWidgets.QStyledItemDelegate):
             x1, y1, x2, y2 = option.rect.getCoords()
             option.rect.setCoords(x1+1,y1+1,x2-1,y2-1)
             painter.drawRect(option.rect)
+        
+        painter.save()
+    
+        painter.translate(textRect.topLeft())
+        # Hide too long text; do not allow cells to overlap
+        painter.setClipRect(textRect.translated(-textRect.topLeft()))
+    
+        painter.restore()
 
 
 
@@ -59,8 +80,8 @@ class Table(PyQt5.QtWidgets.QTableView):
     def select(self,rowno,colno):
         if rowno == self.delegate.rowno and colno == self.delegate.colno:
             return
-        self.model.update(self.delegate.rowno,self.delegate.colno)
-        self.model.update(rowno,colno)
+        self.mymodel.update(self.delegate.rowno,self.delegate.colno)
+        self.mymodel.update(rowno,colno)
         self.delegate.rowno = rowno
         self.delegate.colno = colno
     
@@ -116,6 +137,13 @@ class Table(PyQt5.QtWidgets.QTableView):
 
 class App(PyQt5.QtWidgets.QMainWindow):
     
+    def __init__(self):
+        super().__init__()
+        self.table = Table()
+        self.setCentralWidget(self.table)
+        self.setGeometry(300,200,800,600)
+        PyQt5.QtWidgets.QShortcut(PyQt5.QtGui.QKeySequence('Down'),self).activated.connect(self.table.go_down)
+    
     def fill(self):
         self.table.matrix = []
         for i in range(self.table.rownum):
@@ -124,21 +152,14 @@ class App(PyQt5.QtWidgets.QMainWindow):
                 mes = 'Row {}. Column {}'.format(i+1,j+1)
                 row.append(mes)
             self.table.matrix.append(row)
-        self.table.model = TableModel(self.table.matrix)
-        self.table.setModel(self.table.model)
-    
-    def __init__(self):
-        super().__init__()
-        self.table = Table()
-        self.setCentralWidget(self.table)
-        self.setGeometry(300,200,800,600)
-        PyQt5.QtWidgets.QShortcut(PyQt5.QtGui.QKeySequence('Down'),self).activated.connect(self.table.go_down)
+        self.table.mymodel = TableModel(self.table.matrix)
+        self.table.setModel(self.table.mymodel)
 
 
 if __name__ == '__main__':
-    app = PyQt5.QtWidgets.QApplication(sys.argv)
-    window = App()
-    window.show()
-    window.fill()
-    window.table.set_all_y()
-    app.exec_()
+    exe = PyQt5.QtWidgets.QApplication(sys.argv)
+    app = App()
+    app.fill()
+    app.table.set_all_y()
+    app.show()
+    exe.exec_()
