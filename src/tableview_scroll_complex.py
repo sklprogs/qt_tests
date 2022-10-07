@@ -45,6 +45,10 @@ class TableModel(PyQt5.QtCore.QAbstractTableModel):
 
     def columnCount(self,index):
         return len(self._data[0])
+    
+    def update(self,rowno,colno):
+        index_ = self.index(rowno,colno)
+        self.dataChanged.emit(index_,index_)
 
 
 
@@ -116,7 +120,7 @@ class Table(PyQt5.QtWidgets.QTableView):
     def go_down(self):
         rowno = self.delegate.rowno
         colno = self.delegate.colno
-        next_rowno = rowno + 1
+        rowno += 1
         self.select(rowno,colno)
         self.show_row(rowno)
 
