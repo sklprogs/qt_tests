@@ -76,15 +76,32 @@ class Table(PyQt5.QtWidgets.QTableView):
         self.mymodel.update(old_index)
         self.mymodel.update(new_index)
     
+    def scroll_top(self):
+        f = '[QtTests] tableview_scroll_complex.Table.scroll_top'
+        print('Scrolling top...')
+        height = self.height()
+        index_ = self.currentIndex()
+        rowno = index_.row()
+        colno = index_.column()
+        y = self.rowViewportPosition(rowno)
+        row_height = self.rowHeight(rowno)
+        page_y = y - height + 2 * row_height
+        page_row_no = self.rowAt(page_y)
+        new_index = self.mymodel.index(page_row_no,colno)
+        mes = _('Table height: {}, row #{}, column #{}, row height: {}, row Y: {}, page Y: {}, page row #{}')
+        mes = mes.format(height,rowno,colno,row_height,y,page_y,page_row_no)
+        sh.objs.get_mes(f,mes,True).show_debug()
+        #self.scrollTo(new_index,PyQt5.QtWidgets.QAbstractItemView.PositionAtTop)
+        self.scrollTo(new_index,PyQt5.QtWidgets.QAbstractItemView.PositionAtTop)
+    
     def keyPressEvent(self,event):
         #if event.key() == PyQt5.QtCore.Qt.Key_Down:
         if event.key() == PyQt5.QtCore.Qt.Key_Q:
             print('Going down...')
             self.go_down()
-            #self.scrollTo(self.index,PyQt5.QtWidgets.QAbstractItemView.PositionAtTop)
             #self.print_cell()
         super().keyPressEvent(event)
-    
+            
     def set_row_height(self,height=42):
         for no in range(self.rownum):
             self.setRowHeight(no,height)
@@ -104,6 +121,7 @@ class App(PyQt5.QtWidgets.QMainWindow):
         self.setCentralWidget(self.table)
         self.setGeometry(300,200,800,600)
         #PyQt5.QtWidgets.QShortcut(PyQt5.QtGui.QKeySequence('Down'),self).activated.connect(self.table.go_down)
+        PyQt5.QtWidgets.QShortcut(PyQt5.QtGui.QKeySequence('x'),self).activated.connect(self.table.scroll_top)
     
     def fill(self):
         self.table.matrix = []
