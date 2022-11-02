@@ -59,9 +59,11 @@ class Table(PyQt5.QtWidgets.QTableView):
     def __init__(self):
         super().__init__()
         # mouseMoveEvent is not activated without this
-        #self.setMouseTracking(True)
+        self.setMouseTracking(True)
     
     def set_index(self,index_):
+        #mes = 'Set {} as current index'.format(index_)
+        #print(mes)
         self.setCurrentIndex(index_)
         #self.delegate.index = index_
     
@@ -72,15 +74,17 @@ class Table(PyQt5.QtWidgets.QTableView):
         index_ = self.mymodel.index(rowno,colno)
         self.set_index(index_)
     
-    '''
     def mouseMoveEvent(self,event):
+        '''
         print('CustomTableView.mouseMoveEvent')
         colno = self.columnAt(event.pos().x())
         rowno = self.rowAt(event.pos().y())
         mes = 'Row: {}, column: {}'.format(rowno,colno)
         print(mes)
-    '''
+        '''
+        self._use_mouse(event)
     
+    """
     def eventFilter(self,widget,event):
         ''' #NOTE: Return True for matches only, otherwise the app will freeze!
             Qt accepts boolean at output, but not NoneType.
@@ -89,6 +93,7 @@ class Table(PyQt5.QtWidgets.QTableView):
             self._use_mouse(event)
             return True
         return False
+    """
 
 
 
@@ -109,11 +114,19 @@ class MainWindow(PyQt5.QtWidgets.QMainWindow):
         self.table.mymodel = model
         #self.table.setItemDelegate(CustomDelegate())
         self.setCentralWidget(self.table)
+        self.setGeometry(100,100,400,400)
+        self.set_bindings()
+    
+    def bind(self,hotkey,action):
+        PyQt5.QtWidgets.QShortcut(PyQt5.QtGui.QKeySequence(hotkey),self).activated.connect(action)
+    
+    def set_bindings(self):
+        self.bind('Ctrl+Q',self.close)
 
 
 if __name__ == '__main__':
     app = PyQt5.QtWidgets.QApplication(sys.argv)
     window = MainWindow()
-    app.installEventFilter(window.table)
+    #app.installEventFilter(window.table)
     window.show()
     app.exec_()
