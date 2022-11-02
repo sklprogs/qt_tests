@@ -4,6 +4,11 @@ import PyQt5.QtWidgets
 
 
 class CustomDelegate(PyQt5.QtWidgets.QStyledItemDelegate):
+    
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.index = None
+    
     # akej74, https://stackoverflow.com/questions/35397943/how-to-make-a-fast-qtableview-with-html-formatted-and-clickable-cells
     def paint(self,painter,option,index):
         options = PyQt5.QtWidgets.QStyleOptionViewItem(option)
@@ -25,6 +30,15 @@ class CustomDelegate(PyQt5.QtWidgets.QStyledItemDelegate):
     
         painter.save()
     
+        if self.index and index == self.index:
+            color = PyQt5.QtGui.QColor('red')
+            pen = PyQt5.QtGui.QPen(color,2)
+            painter.setPen(pen)
+            # Avoid intersecting cell borders and artifacts as the result
+            x1, y1, x2, y2 = option.rect.getCoords()
+            option.rect.setCoords(x1+1,y1+1,x2-1,y2-1)
+            painter.drawRect(option.rect)
+        
         painter.translate(textRect.topLeft())
         painter.setClipRect(textRect.translated(-textRect.topLeft()))
         painter.translate(0,0.5*(options.rect.height() - doc.size().height()))
@@ -60,18 +74,22 @@ class Table(PyQt5.QtWidgets.QTableView):
         super().__init__()
         # mouseMoveEvent is not activated without this
         self.setMouseTracking(True)
+        self.delegate = CustomDelegate()
+        self.setItemDelegate(self.delegate)
     
     def set_index(self,index_):
         #mes = 'Set {} as current index'.format(index_)
         #print(mes)
-        self.setCurrentIndex(index_)
-        #self.delegate.index = index_
+        #self.setCurrentIndex(index_)
+        self.delegate.index = index_
     
     def _use_mouse(self,event):
         pos = event.pos()
         rowno = self.rowAt(pos.y())
         colno = self.columnAt(pos.x())
         index_ = self.mymodel.index(rowno,colno)
+        mes = 'Row #{}. Column #{}. Index: {}'.format(rowno,colno,index_)
+        print(mes)
         self.set_index(index_)
     
     def mouseMoveEvent(self,event):
@@ -112,7 +130,6 @@ class MainWindow(PyQt5.QtWidgets.QMainWindow):
         model = TableModel(lst)
         self.table.setModel(model)
         self.table.mymodel = model
-        #self.table.setItemDelegate(CustomDelegate())
         self.setCentralWidget(self.table)
         self.setGeometry(100,100,400,400)
         self.set_bindings()
