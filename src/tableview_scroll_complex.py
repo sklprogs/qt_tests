@@ -91,7 +91,6 @@ class Table(PyQt5.QtWidgets.QTableView):
         mes = _('Table height: {}, row #{}, column #{}, row height: {}, row Y: {}, page Y: {}, page row #{}')
         mes = mes.format(height,rowno,colno,row_height,y,page_y,page_row_no)
         sh.objs.get_mes(f,mes,True).show_debug()
-        #self.scrollTo(new_index,PyQt5.QtWidgets.QAbstractItemView.PositionAtTop)
         self.scrollTo(new_index,PyQt5.QtWidgets.QAbstractItemView.PositionAtTop)
     
     def keyPressEvent(self,event):
