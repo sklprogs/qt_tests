@@ -53,6 +53,9 @@ class TableModel(PyQt5.QtCore.QAbstractTableModel):
         super(TableModel, self).__init__()
         self._data = data
 
+    def update(self,index_):
+        self.dataChanged.emit(index_,index_)
+    
     def data(self,index,role):
         if role == PyQt5.QtCore.Qt.DisplayRole:
             return self._data[index.row()][index.column()]
@@ -77,21 +80,20 @@ class Table(PyQt5.QtWidgets.QTableView):
         self.delegate = CustomDelegate()
         self.setItemDelegate(self.delegate)
     
-    def set_index(self,index_):
-        #mes = 'Set {} as current index'.format(index_)
-        #print(mes)
-        #self.setCurrentIndex(index_)
-        self.delegate.index = index_
-    
     def _use_mouse(self,event):
+        if self.delegate.index:
+            self.mymodel.update(self.delegate.index)
         pos = event.pos()
         rowno = self.rowAt(pos.y())
         colno = self.columnAt(pos.x())
         index_ = self.mymodel.index(rowno,colno)
         mes = 'Row #{}. Column #{}. Index: {}'.format(rowno,colno,index_)
         print(mes)
-        self.set_index(index_)
+        #self.setCurrentIndex(index_)
+        self.delegate.index = index_
+        self.mymodel.update(self.delegate.index)
     
+    """
     def mouseMoveEvent(self,event):
         '''
         print('CustomTableView.mouseMoveEvent')
@@ -101,8 +103,8 @@ class Table(PyQt5.QtWidgets.QTableView):
         print(mes)
         '''
         self._use_mouse(event)
-    
     """
+    
     def eventFilter(self,widget,event):
         ''' #NOTE: Return True for matches only, otherwise the app will freeze!
             Qt accepts boolean at output, but not NoneType.
@@ -111,7 +113,6 @@ class Table(PyQt5.QtWidgets.QTableView):
             self._use_mouse(event)
             return True
         return False
-    """
 
 
 
@@ -144,6 +145,6 @@ class MainWindow(PyQt5.QtWidgets.QMainWindow):
 if __name__ == '__main__':
     app = PyQt5.QtWidgets.QApplication(sys.argv)
     window = MainWindow()
-    #app.installEventFilter(window.table)
+    app.installEventFilter(window.table)
     window.show()
     app.exec_()
