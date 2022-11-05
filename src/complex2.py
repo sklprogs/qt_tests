@@ -99,10 +99,14 @@ class Panel:
         self.layout.setContentsMargins(4,4,4,4)
         self.widget.setLayout(self.layout)
     
+    def translate(self):
+        print('translate')
+    
     def set_buttons(self):
         self.btn_trn = sh.Button (hint = _('Translate')
                                  ,inactive = self.icn_ret
                                  ,active = self.icn_ret
+                                 ,action = self.translate
                                  )
         self.btn_clr = sh.Button (hint = _('Clear search field')
                                  ,inactive = self.icn_clr
