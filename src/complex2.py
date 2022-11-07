@@ -74,10 +74,14 @@ class Table:
     def __init__(self):
         self.set_gui()
         
+    def say_table(self):
+        print('table is here!')
+    
     def set_gui(self):
         self.widget = PyQt5.QtWidgets.QWidget()
         self.layout = PyQt5.QtWidgets.QVBoxLayout()
         self.table = PyQt5.QtWidgets.QTableView()
+        self.table.clicked.connect(self.say_table)
 
 
 
