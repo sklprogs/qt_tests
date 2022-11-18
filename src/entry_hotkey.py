@@ -22,14 +22,10 @@ class Entry(PyQt5.QtWidgets.QLineEdit):
     
     def keyPressEvent(self,event):
         print('Triggered')
-        if event.key() == PyQt5.QtCore.Qt.Key_Down:
-        #if event.key() == 'V':
-        #if event.key() == 'V' and event.modifiers() & PyQt5.QtCore.Qt.ControlModifier:
+        if event.key() == PyQt5.QtCore.Qt.Key_V and event.modifiers() \
+        & PyQt5.QtCore.Qt.ControlModifier:
             print('Catch hotkey')
-            #return True
-        #return PyQt5.QtWidgets.QLineEdit().eventFilter(widget,event)
         super(PyQt5.QtWidgets.QLineEdit,self).keyPressEvent(event)
-        #return True
     
     '''
     def eventFilter(self,widget,event):
